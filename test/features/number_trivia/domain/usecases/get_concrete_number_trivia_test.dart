@@ -33,7 +33,8 @@ void main() {
           .thenAnswer((_) async => Right(tNumberTrivia)); // Right means success in Either.
       
       // Act
-      final result = await useCase.execute(number: tNumber);
+      //final result = await useCase.call(number: tNumber); // to specify the name "call" is not mandatory
+      final result = await useCase(number: tNumber);
 
       // Assert
       expect(result, Right(tNumberTrivia));

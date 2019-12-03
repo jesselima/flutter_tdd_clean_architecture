@@ -12,7 +12,8 @@ class GetConcreteNumberTrivia {
 
   GetConcreteNumberTrivia(this.repository);
 
-  Future<Either<Failure, NumberTrivia>> execute({ @required int number }) async {
+  // The name of the method "call" stands for the Callable class in Dart.
+  Future<Either<Failure, NumberTrivia>> call({ @required int number }) async {
     return await repository.getConcreteNumberTrivia(number);
   }
 }
