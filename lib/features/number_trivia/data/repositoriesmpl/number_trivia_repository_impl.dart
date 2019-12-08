@@ -9,6 +9,10 @@ import '../../data/datasources/number_trivia_remote_data_source.dart';
 import '../../domain/entities/number_trivia_entity.dart';
 import '../../domain/repositories/number_trivia_repository.dart';
 
+
+typedef Future<NumberTrivia> _ConcreteOrRandomChooser();
+
+
 class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
 
   final NumberTriviaRemoteDataSource remoteDataSource;
@@ -23,29 +27,29 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
 
   @override
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int number) async {
-    if(await networkInfo.isConnected) {
-      try {
-        final remoteTriviaToCache = await remoteDataSource.getConcreteNumberTrivia(number);
-        localDataSource.cacheNumberTrivia(remoteTriviaToCache);
-        return Right(remoteTriviaToCache);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-    } else {
-      try {
-        final localTrivia = await localDataSource.getLastNumberTrivia();
-        return Right(localTrivia);
-      } on CacheException {
-        return Left(CacheFailure());
-      }
-    }
+    return await _getTrivia(() {
+      return remoteDataSource.getConcreteNumberTrivia(number);
+    });
   }
 
   @override
   Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
+    return await _getTrivia(() {
+        return remoteDataSource.getRandomNumberTrivia();
+    });
+  }
+
+  // This a high order function to avoid code duplication
+  Future<Either<Failure, NumberTrivia>> _getTrivia(
+      //Future<NumberTrivia> Function() getConcreteOrRandom // Function() means the function get no arguments
+      _ConcreteOrRandomChooser getConcreteOrRandom
+      ) async {
+
     if(await networkInfo.isConnected) {
       try {
-        final remoteTriviaToCache = await remoteDataSource.getRandomNumberTrivia();
+        // This is the only different line of code
+        final remoteTriviaToCache = await getConcreteOrRandom();
+
         localDataSource.cacheNumberTrivia(remoteTriviaToCache);
         return Right(remoteTriviaToCache);
       } on ServerException {
