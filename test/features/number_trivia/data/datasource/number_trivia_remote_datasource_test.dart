@@ -24,6 +24,18 @@ void main() {
   });
 
 
+  /// Setup the http mocks
+  void setupMockHttpSuccessClientSuccess200() {
+    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response(fixture('trivia.json'), 200));
+  }
+
+  void setupMockHttpSuccessClientFailure404({ int statusCode }) {
+    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response('some wrong argument url', 404));
+  }
+
+
   group('getConcreteNumberTrivia', () {
 
       int number = 1;
@@ -37,8 +49,7 @@ void main() {
            andpoint and with application/json header''',
         () async {
           // Arrange
-          when(mockHttpClient.get(any, headers: anyNamed('headers'))) // in this case mockito can not infer the name of the parameter (it's a limitation)
-              .thenAnswer((_) async => http.Response(fixture('trivia.json'), 200));
+          setupMockHttpSuccessClientSuccess200();
           // Act
           dataSource.getConcreteNumberTrivia(number);
           // Assert - check if the call have been made with the proper headers and url.
@@ -46,40 +57,34 @@ void main() {
               'http://numbersapi.com/$number',
               headers: { 'Content-Type': 'aplication/json'}
           ));
-
         },
       );
 
       test(
         'SHOULD return NumberTrivia when the response code is 200 (success)',
-            () async {
+        () async {
           // Arrange
-          when(mockHttpClient.get(any, headers: anyNamed('headers')))
-              .thenAnswer((_) async => http.Response(fixture('trivia.json'), 200));
+          setupMockHttpSuccessClientSuccess200();
           // Act
           final actual = await dataSource.getConcreteNumberTrivia(number);
           // Assert - check if the call have been made with the proper headers and url.
           expect(actual, equals(numberTriviaModel));
-
         },
       );
 
-    /* TESTS FOR FAILURE RESPONSES CASES */
+      /* TESTS FOR FAILURE RESPONSES CASES */
 
-    test(
-    'SHOULD throw ServerException when the response code is 404 or other',
-      () async {
-
-        // Arrange
-        when(mockHttpClient.get(any, headers: anyNamed('headers')))
-            .thenAnswer((_) async => http.Response('some wrong argument url', 404));
-        // Act
-        final call = dataSource.getConcreteNumberTrivia;
-        // assert
-        expect(() => call(number), throwsA(TypeMatcher<ServerException>()));
-
-      },
-    );
+      test(
+      'SHOULD throw ServerException when the response code is 404 or other',
+        () async {
+          // Arrange
+          setupMockHttpSuccessClientFailure404();
+          // Act
+          final call = dataSource.getConcreteNumberTrivia;
+          // assert
+          expect(() => call(number), throwsA(TypeMatcher<ServerException>()));
+        },
+      );
 
   });
 
