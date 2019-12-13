@@ -36,6 +36,8 @@ void main() {
   }
 
 
+  /* TESTS FOR getConcreteNumberTrivia */
+
   group('getConcreteNumberTrivia', () {
 
       int number = 1;
@@ -83,6 +85,61 @@ void main() {
           final call = dataSource.getConcreteNumberTrivia;
           // assert
           expect(() => call(number), throwsA(TypeMatcher<ServerException>()));
+        },
+      );
+
+  });
+
+
+  /* TESTS FOR getRandomNumberTrivia */
+
+  group('getRandomNumberTrivia', () {
+
+      int number = 1;
+      final numberTriviaModel = NumberTriviaModel.fromJson(json.decode(fixture('trivia.json')));
+
+
+      /* TESTS FOR SUCCESS RESPONSE CASES */
+
+      test(
+        '''SHOULD perform a get request ona URL with a number being the 
+           andpoint and with application/json header''',
+        () async {
+          // Arrange
+          setupMockHttpSuccessClientSuccess200();
+          // Act
+          dataSource.getRandomNumberTrivia();
+          // Assert - check if the call have been made with the proper headers and url.
+          verify(mockHttpClient.get(
+              'http://numbersapi.com/random',
+              headers: { 'Content-Type': 'aplication/json'}
+          ));
+        },
+      );
+
+      test(
+        'SHOULD return NumberTrivia when the response code is 200 (success)',
+        () async {
+          // Arrange
+          setupMockHttpSuccessClientSuccess200();
+          // Act
+          final actual = await dataSource.getRandomNumberTrivia();
+          // Assert - check if the call have been made with the proper headers and url.
+          expect(actual, equals(numberTriviaModel));
+        },
+      );
+
+      /* TESTS FOR FAILURE RESPONSES CASES */
+
+      test(
+      'SHOULD throw ServerException when the response code is 404 or other',
+        () async {
+          // Arrange
+          setupMockHttpSuccessClientFailure404();
+          // Act
+          final call = dataSource.getRandomNumberTrivia;
+          // assert
+          expect(() => call(), throwsA(TypeMatcher<ServerException>()));
         },
       );
 
