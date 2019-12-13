@@ -19,31 +19,20 @@ class NumberTriviaRemoteDataSourceImpl implements NumberTriviaRemoteDataSource {
   /// Calls the http://numbersapi.com/{number} endpoint.
   /// Throws a [ServerException] for all error codes.
   @override
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
-     final response = await client.get(
-         'http://numbersapi.com/$number',
-         headers: {
-           'Content-Type': 'aplication/json'
-         }
-     );
-
-     if (response.statusCode == 200) {
-       return NumberTriviaModel.fromJson(json.decode(response.body));
-     } else {
-       throw ServerException();
-     }
-
-  }
+  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) => _getTriviaFromUrl('http://numbersapi.com/$number');
 
   /// Calls the http://numbersapi.com/random endpoint.
   /// Throws a [ServerException] for all error codes.
   @override
-  Future<NumberTriviaModel> getRandomNumberTrivia() async {
+  Future<NumberTriviaModel> getRandomNumberTrivia() => _getTriviaFromUrl('http://numbersapi.com/random');
+
+
+  Future<NumberTriviaModel> _getTriviaFromUrl(String url) async {
     final response = await client.get(
-        'http://numbersapi.com/random',
-        headers: {
-          'Content-Type': 'aplication/json'
-        }
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
 
     if (response.statusCode == 200) {
