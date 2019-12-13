@@ -10,7 +10,7 @@ import '../../domain/entities/number_trivia_entity.dart';
 import '../../domain/repositories/number_trivia_repository.dart';
 
 
-typedef Future<NumberTrivia> _ConcreteOrRandomChooser();
+typedef Future<NumberTriviaEntity> _ConcreteOrRandomChooser();
 
 
 class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
@@ -26,21 +26,21 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   });
 
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int number) async {
+  Future<Either<Failure, NumberTriviaEntity>> getConcreteNumberTrivia(int number) async {
     return await _getTrivia(() {
       return remoteDataSource.getConcreteNumberTrivia(number);
     });
   }
 
   @override
-  Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
+  Future<Either<Failure, NumberTriviaEntity>> getRandomNumberTrivia() async {
     return await _getTrivia(() {
         return remoteDataSource.getRandomNumberTrivia();
     });
   }
 
   // This a high order function to avoid code duplication
-  Future<Either<Failure, NumberTrivia>> _getTrivia(
+  Future<Either<Failure, NumberTriviaEntity>> _getTrivia(
       //Future<NumberTrivia> Function() getConcreteOrRandom // Function() means the function get no arguments
       _ConcreteOrRandomChooser getConcreteOrRandom
       ) async {

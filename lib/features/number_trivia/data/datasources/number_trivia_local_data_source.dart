@@ -3,7 +3,7 @@ import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/ent
 
 abstract class NumberTriviaLocalDataSource {
 
-  /// Gets the cached [NumberTrivia] which was gotten the last time
+  /// Gets the cached [NumberTriviaEntity] which was gotten the last time
   /// the user had an internet connection.
   /// Throws [CacheDataException] if no cached data is present.
   Future<void> cacheNumberTrivia(NumberTriviaModel numberTriviaModelToCache);

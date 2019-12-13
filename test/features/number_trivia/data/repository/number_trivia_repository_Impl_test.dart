@@ -69,7 +69,7 @@ void main(){
 
     final number = 1;
     final tNumberTriviaModel = NumberTriviaModel(number: number, text: 'test trivia');
-    final NumberTrivia tNumberTrivia = tNumberTriviaModel;
+    final NumberTriviaEntity tNumberTrivia = tNumberTriviaModel;
 
     test(
       'SHOULD check if device is online',
@@ -184,7 +184,7 @@ void main(){
   group('getRandomNumberTrivia', () {
 
     final tNumberTriviaModel = NumberTriviaModel(number: 123, text: 'test trivia');
-    final NumberTrivia tNumberTrivia = tNumberTriviaModel;
+    final NumberTriviaEntity tNumberTrivia = tNumberTriviaModel;
 
     test(
       'SHOULD check if device is online',

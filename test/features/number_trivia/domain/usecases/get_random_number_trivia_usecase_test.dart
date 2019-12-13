@@ -23,7 +23,7 @@ void main() {
   });
 
 
-  final tNumberTrivia = NumberTrivia(number: 1, text: 'test',);
+  final tNumberTrivia = NumberTriviaEntity(number: 1, text: 'test',);
 
 
   test(

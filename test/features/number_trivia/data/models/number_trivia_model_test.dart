@@ -15,7 +15,7 @@ void main() {
     () async {
 
       // Arrange
-      expect(tNumberTriviaModel, isA<NumberTrivia>());
+      expect(tNumberTriviaModel, isA<NumberTriviaEntity>());
 
     },
   );

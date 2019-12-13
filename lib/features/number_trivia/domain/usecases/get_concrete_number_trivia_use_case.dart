@@ -8,7 +8,7 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../../features/number_trivia/domain/entities/number_trivia_entity.dart';
 import '../repositories/number_trivia_repository.dart';
 
-class GetConcreteNumberTriviaUseCase implements UseCase<NumberTrivia, Params> {
+class GetConcreteNumberTriviaUseCase implements UseCase<NumberTriviaEntity, Params> {
 
   final NumberTriviaRepository repository;
 
@@ -16,7 +16,7 @@ class GetConcreteNumberTriviaUseCase implements UseCase<NumberTrivia, Params> {
 
   // The name of the method "call" stands for the Callable class in Dart.
   @override
-  Future<Either<Failure, NumberTrivia>> call(
+  Future<Either<Failure, NumberTriviaEntity>> call(
       Params params,
   ) async {
     return await repository.getConcreteNumberTrivia(params.number);
