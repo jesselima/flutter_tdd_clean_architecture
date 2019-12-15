@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_tdd_clean_architecture/core/error/failures.dart';
 import 'package:meta/meta.dart';
 
 import 'package:flutter_tdd_clean_architecture/core/util/input_converter.dart';
@@ -46,6 +47,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
     NumberTriviaEvent event,
   ) async* {
     if(event is GetTriviaForConcreteNumberEvent) {
+
       final inputEither = inputConverter.stringToUnsignedInteger(event.numberString);
 
       //inputEither.fold arguments stands for functions: (ifLeft, ifRight);
@@ -54,9 +56,26 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
             yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
           },
           (integer) async* {
-            concreteNumberTriviaUseCase(Params(number: integer));
+            yield Loading();
+
+            final failureOrTrivia = await concreteNumberTriviaUseCase(Params(number: integer));
+            yield failureOrTrivia.fold(
+                    (failure) => Error(message: _mapFailureToMessage(failure)),
+                    (numberTriviaEntity) => Loaded(numberTriviaEntity: numberTriviaEntity));
           }
       );
     }
   }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch(failure.runtimeType) {
+      case ServerFailure:
+        return SERVER_FAILURE_MESSAGE;
+      case CacheFailure:
+        return CACHE_FAILURE_MESSAGE;
+      default:
+        return "Unexpected error";
+    }
+  }
+
 }
