@@ -30,7 +30,7 @@ void main() {
     mockGetRandomNumberTriviaUseCase = MockGetRandomNumberTriviaUseCase();
     mockInputConverter = MockInputConverter();
 
-    // Pass the mock to the bloc cusntructor
+    // Pass the mock to the bloc constructor
     bloc = NumberTriviaBloc(
         concrete: mockGetConcreteNumberTriviaUseCase,
         random: mockGetRandomNumberTriviaUseCase,
@@ -48,7 +48,7 @@ void main() {
 
     final numberString = '1';
     final numberParsed = 1;
-    final numberTrivia = NumberTriviaEntity(number: 1, text: 'test trivia');
+    final numberTriviaEntity = NumberTriviaEntity(number: 1, text: 'test trivia');
 
     test(
     'SHOULD call the InputConverter to validate and convert the string to an unsigned integer',
@@ -57,7 +57,7 @@ void main() {
         when(mockInputConverter.stringToUnsignedInteger(any))
             .thenReturn(Right(numberParsed));
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumber(numberString));
+        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
         // IF we do not wait the method to be called the test will failure.
         // ...with this next line the test will hold and wait until the method is called.
         await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
@@ -85,7 +85,7 @@ void main() {
         // ... THIS WAY WE CAN BE 100% SURE THAT WHEN BLOC IS EXECUTED IT WILL MEET THE EXPECTATION.
         // Video Reference: [11] – Bloc Implementation 1/2 - Seek: 25:46
         // the dispatch does not return anything. That is why we need to use bloc.state to notify
-        bloc.dispatch(GetTriviaForConcreteNumber(numberString));
+        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
 
       },
     );

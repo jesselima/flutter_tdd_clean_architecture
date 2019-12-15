@@ -45,7 +45,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   Stream<NumberTriviaState> mapEventToState(
     NumberTriviaEvent event,
   ) async* {
-    if(event is GetTriviaForConcreteNumber) {
+    if(event is GetTriviaForConcreteNumberEvent) {
       final inputEither = inputConverter.stringToUnsignedInteger(event.numberString);
 
       //inputEither.fold(ifLeft, ifRight);
