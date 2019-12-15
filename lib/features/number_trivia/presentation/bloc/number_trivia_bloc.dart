@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -7,13 +8,19 @@ import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/use
 import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/usecases/get_random_number_trivia_use_case.dart';
 import './bloc.dart';
 
+
+const String SERVER_FAILURE_MESSAGE   = 'Server failure.';
+const String CACHE_FAILURE_MESSAGE    = 'Cache Failure';
+const String INVALID_INPUT_FAILURE_MESSAGE  = 'Invalid Input - The number must be a positive integer or zero.';
+
+
 class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
 
   final GetConcreteNumberTriviaUseCase concreteNumberTriviaUseCase;
   final GetRandomNumberTriviaUseCase randomNumberTriviaUseCase;
   final InputConverter inputConverter;
 
-  // *** Instaed to use a conventional constructor e need to be sure the the constructor arguments are not null
+  // *** Instead to use a conventional constructor e need to be sure the the constructor arguments are not null
   // NumberTriviaBloc({ 
   //     @required this.concreteNumberTriviaUseCase, 
   //     @required this.randomNumberTriviaUseCase, 
@@ -38,6 +45,16 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   Stream<NumberTriviaState> mapEventToState(
     NumberTriviaEvent event,
   ) async* {
-    // TODO: Add Logic
+    if(event is GetTriviaForConcreteNumber) {
+      final inputEither = inputConverter.stringToUnsignedInteger(event.numberString);
+
+      //inputEither.fold(ifLeft, ifRight);
+      yield* inputEither.fold(
+          (failure) async* {
+            yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
+          },
+          (integer) => throw UnimplementedError()
+      );
+    }
   }
 }
