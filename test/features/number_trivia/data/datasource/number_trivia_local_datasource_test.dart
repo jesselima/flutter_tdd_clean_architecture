@@ -18,13 +18,13 @@ void main() {
   const CACHED_NUMBER_TRIVIA = "CACHED_NUMBER_TRIVIA";
 
   // Declare objects
-  NumberTriLocalDataSourceImpl dataSource;
+  NumberTriviaLocalDataSourceImpl dataSource;
   MockSharedPreferences mockSharedPreferences;
 
   setUp(() {
     // Setup objects
     mockSharedPreferences = MockSharedPreferences();
-    dataSource = NumberTriLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
+    dataSource = NumberTriviaLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
   });
 
 

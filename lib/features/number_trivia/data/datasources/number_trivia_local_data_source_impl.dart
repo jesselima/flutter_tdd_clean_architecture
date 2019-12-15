@@ -6,11 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-class NumberTriLocalDataSourceImpl implements NumberTriviaLocalDataSource {
+class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
 
   final SharedPreferences sharedPreferences;
 
-  NumberTriLocalDataSourceImpl({ @required this.sharedPreferences });
+  NumberTriviaLocalDataSourceImpl({ @required this.sharedPreferences });
 
   static const CACHED_NUMBER_TRIVIA = "CACHED_NUMBER_TRIVIA";
 
