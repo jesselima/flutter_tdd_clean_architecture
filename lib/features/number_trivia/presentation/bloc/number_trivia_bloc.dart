@@ -48,12 +48,14 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
     if(event is GetTriviaForConcreteNumberEvent) {
       final inputEither = inputConverter.stringToUnsignedInteger(event.numberString);
 
-      //inputEither.fold(ifLeft, ifRight);
+      //inputEither.fold arguments stands for functions: (ifLeft, ifRight);
       yield* inputEither.fold(
           (failure) async* {
             yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
           },
-          (integer) => throw UnimplementedError()
+          (integer) async* {
+            concreteNumberTriviaUseCase(Params(number: integer));
+          }
       );
     }
   }

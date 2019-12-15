@@ -2,7 +2,6 @@ import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/ent
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:ui' as ui;
 
 import 'package:flutter_tdd_clean_architecture/core/util/input_converter.dart';
 import 'package:flutter_tdd_clean_architecture/features/number_trivia/presentation/bloc/bloc.dart';
@@ -86,6 +85,28 @@ void main() {
         // Video Reference: [11] – Bloc Implementation 1/2 - Seek: 25:46
         // the dispatch does not return anything. That is why we need to use bloc.state to notify
         bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+
+      },
+    );
+
+    test(
+      'SHOULD get data from the concrete UseCase',
+          () async {
+
+        // Arrange
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Right(numberParsed));
+
+        // Arrange - Mock the UseCase
+        when(mockGetConcreteNumberTriviaUseCase(any))
+            .thenAnswer((_) async => Right(numberTriviaEntity));
+
+        // Act
+        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        await untilCalled(mockGetConcreteNumberTriviaUseCase(any));
+
+        // Assert
+        verify(mockGetConcreteNumberTriviaUseCase(Params(number: numberParsed)));
 
       },
     );

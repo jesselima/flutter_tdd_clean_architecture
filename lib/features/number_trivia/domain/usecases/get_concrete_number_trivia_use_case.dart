@@ -16,9 +16,7 @@ class GetConcreteNumberTriviaUseCase implements UseCase<NumberTriviaEntity, Para
 
   // The name of the method "call" stands for the Callable class in Dart.
   @override
-  Future<Either<Failure, NumberTriviaEntity>> call(
-      Params params,
-  ) async {
+  Future<Either<Failure, NumberTriviaEntity>> call(Params params) async {
     return await repository.getConcreteNumberTrivia(params.number);
   }
 }
@@ -29,5 +27,4 @@ class Params extends Equatable {
   final int number;
 
   Params({ @required this.number }) : super([number]);
-
 }
