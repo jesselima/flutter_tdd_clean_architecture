@@ -1,4 +1,5 @@
 import 'package:flutter_tdd_clean_architecture/core/error/failures.dart';
+import 'package:flutter_tdd_clean_architecture/core/usecases/usecase.dart';
 import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/entities/number_trivia_entity.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
@@ -42,6 +43,9 @@ void main() {
     // Assert
     expect(bloc.initialState, equals(Empty()));
   });
+
+
+  /* TESTS FOR Get Trivia For CONCRETE Number */
 
   group('GetTriviaForConcreteNumber', () {
 
@@ -183,6 +187,103 @@ void main() {
 
         // Act
         bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+
+      },
+    );
+
+  });
+
+
+  /* TESTS FOR Get RANDOM Trivia */
+
+  group('GetTriviaForRandomNumber', () {
+
+    final numberTriviaEntity = NumberTriviaEntity(number: 1, text: 'test trivia');
+
+
+    test(
+      'SHOULD get data from the random UseCase',
+      () async {
+
+        // Arrange - Mock the UseCase
+        when(mockGetRandomNumberTriviaUseCase(any)) // Could be NoParams(). But we do it on verity part
+            .thenAnswer((_) async => Right(numberTriviaEntity));
+
+        // Act
+        bloc.dispatch(GetTriviaForRandomNumberEvent());
+        await untilCalled(mockGetRandomNumberTriviaUseCase(any));
+
+        // Assert
+        verify(mockGetRandomNumberTriviaUseCase(NoParams()));
+
+      },
+    );
+
+
+    test(
+      'SHOULD emit [Loading, Loaded] when random data is gotten successfuly',
+          () async {
+
+        // Arrange
+        when(mockGetRandomNumberTriviaUseCase(any))
+            .thenAnswer((_) async => Right(numberTriviaEntity));
+
+        // Assert later
+        final expectedList = [
+          Empty(), // OR bloc.initialState
+          Loading(),
+          Loaded(numberTriviaEntity: numberTriviaEntity)
+        ];
+        expectLater(bloc.state, emitsInOrder(expectedList));
+
+        // Act
+        bloc.dispatch(GetTriviaForRandomNumberEvent());
+
+      },
+    );
+
+
+    test(
+      'SHOULD emit [Loading, Error] when getting random data fails',
+          () async {
+
+        // Arrange
+        when(mockGetRandomNumberTriviaUseCase(any))
+            .thenAnswer((_) async => Left(ServerFailure()));
+
+        // Assert later
+        final expectedList = [
+          Empty(), // OR bloc.initialState
+          Loading(),
+          Error(message: SERVER_FAILURE_MESSAGE)
+        ];
+        expectLater(bloc.state, emitsInOrder(expectedList));
+
+        // Act
+        bloc.dispatch(GetTriviaForRandomNumberEvent());
+
+      },
+    );
+
+
+    test(
+      'SHOULD emit [Loading, Error] with a proper message for the error when getting random data fails',
+          () async {
+
+        // Arrange
+        when(mockGetRandomNumberTriviaUseCase(any))
+            .thenAnswer((_) async => Left(CacheFailure()));
+
+        // Assert later
+        final expectedList = [
+          Empty(), // OR bloc.initialState
+          Loading(),
+          Error(message: CACHE_FAILURE_MESSAGE)
+        ];
+        expectLater(bloc.state, emitsInOrder(expectedList));
+
+        // Act
+        bloc.dispatch(GetTriviaForRandomNumberEvent());
 
       },
     );

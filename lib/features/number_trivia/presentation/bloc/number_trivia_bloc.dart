@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_tdd_clean_architecture/core/error/failures.dart';
+import 'package:flutter_tdd_clean_architecture/core/usecases/usecase.dart';
+import 'package:flutter_tdd_clean_architecture/features/number_trivia/domain/entities/number_trivia_entity.dart';
 import 'package:meta/meta.dart';
 
 import 'package:flutter_tdd_clean_architecture/core/util/input_converter.dart';
@@ -59,12 +62,20 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
             yield Loading();
 
             final failureOrTrivia = await concreteNumberTriviaUseCase(Params(number: integer));
-            yield failureOrTrivia.fold(
-                    (failure) => Error(message: _mapFailureToMessage(failure)),
-                    (numberTriviaEntity) => Loaded(numberTriviaEntity: numberTriviaEntity));
+            yield* _eitherLoadedOrErrorState(failureOrTrivia);
           }
       );
+    } else {
+      yield Loading();
+      final failureOrTrivia = await randomNumberTriviaUseCase(NoParams());
+      yield* _eitherLoadedOrErrorState(failureOrTrivia);
     }
+  }
+
+  Stream<NumberTriviaState> _eitherLoadedOrErrorState(Either<Failure, NumberTriviaEntity> failureOrTrivia) async* {
+    yield failureOrTrivia.fold(
+            (failure) => Error(message: _mapFailureToMessage(failure)),
+            (numberTriviaEntity) => Loaded(numberTriviaEntity: numberTriviaEntity));
   }
 
   String _mapFailureToMessage(Failure failure) {
