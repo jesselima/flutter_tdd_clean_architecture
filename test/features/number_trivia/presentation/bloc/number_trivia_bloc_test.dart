@@ -21,6 +21,7 @@ class MockInputConverter extends Mock implements InputConverter { }
 
 void main() {
 
+  // ignore: close_sinks
   NumberTriviaBloc bloc;
   MockGetConcreteNumberTriviaUseCase mockGetConcreteNumberTriviaUseCase;
   MockGetRandomNumberTriviaUseCase mockGetRandomNumberTriviaUseCase;
@@ -66,7 +67,7 @@ void main() {
         // Arrange
         setupMockInputConverterSuccess();
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
         // IF we do not wait the method to be called the test will failure.
         // ...with this next line the test will hold and wait until the method is called.
         await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
@@ -93,7 +94,7 @@ void main() {
         // ... THIS WAY WE CAN BE 100% SURE THAT WHEN BLOC IS EXECUTED IT WILL MEET THE EXPECTATION.
         // Video Reference: [11] – Bloc Implementation 1/2 - Seek: 25:46
         // the dispatch does not return anything. That is why we need to use bloc.state to notify
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
 
       },
     );
@@ -110,7 +111,7 @@ void main() {
             .thenAnswer((_) async => Right(numberTriviaEntity));
 
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
         await untilCalled(mockGetConcreteNumberTriviaUseCase(any));
 
         // Assert
@@ -138,7 +139,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
 
       },
     );
@@ -162,7 +163,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
 
       },
     );
@@ -186,7 +187,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForConcreteNumberEvent(numberString));
+        bloc.add(GetTriviaForConcreteNumberEvent(numberString));
 
       },
     );
@@ -210,7 +211,7 @@ void main() {
             .thenAnswer((_) async => Right(numberTriviaEntity));
 
         // Act
-        bloc.dispatch(GetTriviaForRandomNumberEvent());
+        bloc.add(GetTriviaForRandomNumberEvent());
         await untilCalled(mockGetRandomNumberTriviaUseCase(any));
 
         // Assert
@@ -237,7 +238,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForRandomNumberEvent());
+        bloc.add(GetTriviaForRandomNumberEvent());
 
       },
     );
@@ -260,7 +261,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForRandomNumberEvent());
+        bloc.add(GetTriviaForRandomNumberEvent());
 
       },
     );
@@ -274,6 +275,8 @@ void main() {
         when(mockGetRandomNumberTriviaUseCase(any))
             .thenAnswer((_) async => Left(CacheFailure()));
 
+
+
         // Assert later
         final expectedList = [
           Empty(), // OR bloc.initialState
@@ -283,7 +286,7 @@ void main() {
         expectLater(bloc.state, emitsInOrder(expectedList));
 
         // Act
-        bloc.dispatch(GetTriviaForRandomNumberEvent());
+        bloc.add(GetTriviaForRandomNumberEvent());
 
       },
     );
